@@ -332,7 +332,7 @@ class DeviceSimulator(QMainWindow):
 
         elif cmd == "SET_ACTIVE_SLOT":
             self.state[lut_type]["active_slot"] = int(req["slot_index"])
-            self.state_dirty = True
+            # 🌟 已删除 self.state_dirty = True，DeepLUT 发起的指令不产生脏标记
             self.log(f"⚙️ 切换 {raw_lut_type} 槽位至 {req['slot_index']}")
 
         elif cmd == "SET_ENABLE":
@@ -340,7 +340,6 @@ class DeviceSimulator(QMainWindow):
             if lut_type == "all":
                 for k in ["pre_1d", "lut_3d", "post_1d"]: self.state[k]["enabled"] = st
             else: self.state[lut_type]["enabled"] = st
-            self.state_dirty = True
             self.log(f"⚙️ 设置 {raw_lut_type} 状态: {'开启' if st else '旁路'}")
 
         elif cmd == "DELETE_LUT":
@@ -348,12 +347,10 @@ class DeviceSimulator(QMainWindow):
             if self.state[lut_type]["active_slot"] == slot_idx: self.state[lut_type]["enabled"] = False
             self.state[lut_type]["has_data"][slot_idx - 1] = False
             if slot_idx in self.flash_memory[lut_type]: del self.flash_memory[lut_type][slot_idx]
-            self.state_dirty = True
             self.log(f"🗑️ 已清空 {raw_lut_type} 槽位 {slot_idx}")
 
         elif cmd == "SET_INTERP":
             self.interp_mode = req["mode"]
-            self.state_dirty = True
             self.log(f"⚙️ 切换插值: {self.interp_mode}")
 
         elif cmd == "UPLOAD_LUT":
@@ -375,7 +372,7 @@ class DeviceSimulator(QMainWindow):
                 "grid_size": grid, "domain_min": d_min, "domain_max": d_max
             }
             self.state[lut_type]["has_data"][slot_num - 1] = True
-            self.state_dirty = True
+            # 🌟 已删除 self.state_dirty = True，防止产生回音弹窗
             self.log(f"🔥 数据已存入虚拟闪存，您可使用右侧面板导出 {raw_lut_type} 槽位 {slot_num}")
 
         conn.sendall((json.dumps(res) + "\n").encode('utf-8'))
