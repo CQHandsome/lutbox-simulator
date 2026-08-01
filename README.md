@@ -1,0 +1,2 @@
+本项目为DeepLUT主程序的LUTBOX控制模块的标准通讯协议和模拟LUTBOX的小程序进行参考开发
+device_simulator：模拟LUTBOX小程序
